@@ -43,7 +43,7 @@ class Socket:
         self.socket.listen()
 
         conn, address = self.socket.accept()
-        self.clients.append(conn, address)
+        self.clients.append((conn, address))
 
         print(f'Connected by {self.clients[0][1]}')
 
@@ -78,7 +78,7 @@ class Socket:
         if self.server:
             for client in self.clients:
                 data_string = pickle.dumps(message)
-                client.send(data_string)
+                client[0].send(data_string)
         else:
             data_string = pickle.dumps(message)
             self.socket.send(data_string)
