@@ -9,6 +9,7 @@ FILTER_SOUNDS = ['', ' ', '\n']
 MODEL_PATH = 'models/vosk-model-en-us-0.22-lgraph'
 GIGA_MODEL_PATH = 'models/vosk-model-en-us-0.42-gigaspeech'
 
+
 class STTEngine:
     def __init__(self) -> None:
         # initialize the model with the path to the right model
@@ -23,11 +24,11 @@ class STTEngine:
         print('Opening microphone stream...')
         self.p = pyaudio.PyAudio()
         self.stream = self.p.open(format=pyaudio.paInt16,
-                        channels=1,
-                        rate=SAMPLE_RATE,
-                        input=True,
-                        frames_per_buffer=BUFFER_FRAMES)
-    
+                                  channels=1,
+                                  rate=SAMPLE_RATE,
+                                  input=True,
+                                  frames_per_buffer=BUFFER_FRAMES)
+
     def __del__(self) -> None:
         # terminate the stream and pyaudio objects
         self.stream.stop_stream()
@@ -35,7 +36,7 @@ class STTEngine:
 
         self.p.terminate()
 
-    def speech_to_file(self, file_path = 'data/recognized_text.txt'):
+    def speech_to_file(self, file_path='data/recognized_text.txt'):
 
         with open(file_path, 'w') as file:
             print('Listening for speech. Say \'Terminate\' to stop.')

@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class Command(int, Enum):
     OPEN_STRING_STREAM = 1
     SEND_IP_DATA = 2
