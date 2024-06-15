@@ -55,7 +55,7 @@ def get_time_string() -> str:
         time_string = 'afternoon'
     elif EVENING_START <= now.hour <= EVENING_END:
         time_string = 'evening'
-    elif now.hour >= NIGHT_START or (now.hour >= NIGHT_END and now.hour <= MORNING_START):
+    elif now.hour >= NIGHT_START or (NIGHT_END <= now.hour <= MORNING_START):
         time_string = 'night'
     
     return time_string
@@ -117,7 +117,7 @@ def launch_windows_tests() -> None:
         server.connect()
 
 
-def set_platform_string() -> str:
+def set_platform_string():
     global PLATFORM
     PLATFORM = platform.uname()[0].lower()
 
