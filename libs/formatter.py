@@ -5,10 +5,6 @@ FORMAT = 'utf-8'
 TAG_SEPARATOR = '::'
 
 
-FORMAT = 'utf-8'
-TAG_SEPARATOR = '::'
-
-
 def send(s: socket, data: int | Command | str) -> None:
     """
     send a formatted message over socket

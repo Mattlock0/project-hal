@@ -1,19 +1,22 @@
 # python libraries
 import datetime
 import random
+import platform
 
 # personal libraries
-from libs.tts import TTSEngine
-from libs.msled import MSLED
-from libs.stt import STTEngine
+from libs.texttospeech import TTSEngine
+from libs.motionled import MSLED
+from libs.speechtotext import STTEngine
 from libs.client import Client
+from libs.server import Server
 
 # enable/disable sections
 ENABLE = {'TTS': False, 
           'MSLED': False,
           'MS': False,
           'STT': False,
-          'Client': True}
+          'Client': True,
+          'Server': True}
 
 # time constants
 MORNING_START    = 5
@@ -40,6 +43,8 @@ STARTUP_DIALOGS = ['You look like a confused toad...but it\'s working for you.',
                    'I\'m quite busy, you know. So get on with it.']
 STOP_STRING = '-1'
 
+PLATFORM = None
+
 
 def get_time_string() -> str:
     time_string = 'day'
@@ -55,6 +60,7 @@ def get_time_string() -> str:
     
     return time_string
 
+
 def halt() -> bool:
     inp = input(f'Enter {STOP_STRING} to stop: ')
     if inp == STOP_STRING:
@@ -62,8 +68,8 @@ def halt() -> bool:
     else:
         return False
 
-if __name__ == '__main__':
-    print('Booting up Raspberry PI tests...')
+
+def launch_linux_tests() -> None:
     for key, value in ENABLE.items():
         print(f'|  {key}: {value}  ', end='')
     print("|")
@@ -88,7 +94,7 @@ if __name__ == '__main__':
                 tts_eng.speak(inp)
     
     if ENABLE['MSLED']:
-        indicator = MSLED(ms_enabled=ENABLE_MS)
+        indicator = MSLED(ms_enabled=ENABLE['MSLED'])
         
         while True:
             indicator.manual_color_input()
@@ -103,3 +109,32 @@ if __name__ == '__main__':
     if ENABLE['Client']:
         socket = Client()
         socket.connect()
+
+
+def launch_windows_tests() -> None:
+    if ENABLE['Server']:
+        server = Server()
+        server.connect()
+
+
+def set_platform_string() -> str:
+    global PLATFORM
+    PLATFORM = platform.uname()[0].lower()
+
+
+if __name__ == '__main__':
+    print('Booting up Project HAL...')
+    set_platform_string()
+
+    match PLATFORM:
+        case 'linux':
+            print('Linux hardware detected.')
+            launch_linux_tests()
+
+        case 'windows':
+            print('Windows hardware detected.')
+            launch_windows_tests()
+
+        case _:
+            print(f'Unsupported hardware detected...exiting.')
+            exit()

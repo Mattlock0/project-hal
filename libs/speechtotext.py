@@ -7,6 +7,7 @@ BUFFER_FRAMES = 8192
 
 FILTER_SOUNDS = ['', ' ', '\n']
 MODEL_PATH = 'models/vosk-model-en-us-0.22-lgraph'
+GIGA_MODEL_PATH = 'models/vosk-model-en-us-0.42-gigaspeech'
 
 class STTEngine:
     def __init__(self) -> None:
