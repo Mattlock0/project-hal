@@ -1,6 +1,7 @@
 from libs.common.commands import MessageType, Command
-import libs.common.formatter as MessageFormatter
+import libs.common.message_formatter as MessageFormatter
 import socket
+import pickle
 
 LOCAL_HOST = "127.0.0.1"  # standard loopback interface address (localhost)
 GENERAL_HOST = "0.0.0.0"

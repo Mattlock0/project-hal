@@ -1,9 +1,9 @@
 from gpiozero import RGBLED, MotionSensor
 from time import sleep
-import enum
+from enum import Enum
 
 
-class Color(enum.Enum):
+class Color(Enum):
     RED = (1, 0, 0)
     GREEN = (0, 1, 0)
     BLUE = (1, 0, 0)
@@ -14,7 +14,7 @@ class Color(enum.Enum):
     OFF = (0, 0, 0)
 
 
-class ColorID(enum.IntEnum):
+class ColorID(int, Enum):
     RED = 1
     GREEN = 2
     BLUE = 3

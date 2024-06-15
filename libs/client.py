@@ -1,6 +1,7 @@
 from libs.common.commands import Command, MessageType
-import libs.common.formatter as MessageFormatter
+import libs.common.message_formatter as MessageFormatter
 import socket
+import pickle
 
 SERVER_HOST = "MATTHEW-ALIEN"  # The server's hostname or IP address
 PORT = 55357  # The port used by the server

@@ -1,0 +1,83 @@
+# python includes
+import pickle
+import socket
+
+# hal includes
+from message import Message, MessageType
+
+SERVER_HOST = 'MATTHEW-ALIEN'  # computer name of host
+GENERAL_HOST = '0.0.0.0'  # general, capture-all host for server
+LOCAL_HOST = '127.0.0.1'  # standard loopback interface address (localhost)
+PORT = 55357
+
+
+class Socket:
+    def __init__(self, is_server=False) -> None:
+        self.server = is_server
+        if self.server:
+            self.host = GENERAL_HOST
+        else:
+            self.host = SERVER_HOST
+        self.port = PORT
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    def __del__(self) -> None:
+        self.socket.close()
+        # might need to close connection if server?
+
+    def connect(self):
+        print('Opening socket...')
+        if self.server:
+            self.connect_server()
+        else:
+            self.connect_client()
+
+        print('')
+
+    def connect_server(self):
+        self.socket.bind((self.host, self.port))
+        self.socket.listen()
+
+        client, address = self.socket.accept()
+
+        with client:
+            print(f'Connected by {address}')
+
+            while True:
+                client_message = self.receive(client)
+                if client_message.type == MessageType.CLIENT_CONNECTION:
+                    print(f'Got an init string from client!')
+
+                    server_message = Message(MessageType.STRING, "Welcome to the server!")
+                    self.send(server_message)
+
+                    # then end connection
+                    server_message = Message(MessageType.END_CONNECTION, "Thank you.")
+                    self.send(server_message)
+                    break
+
+    def connect_client(self):
+        self.socket.connect((self.host, self.port))
+
+        # create an init message from the client
+        init_message = Message(MessageType.CLIENT_CONNECTION, 0)
+        self.send(init_message)  # send connection message
+
+        response_message = Message(MessageType.NULL, 0)
+
+        # continue until server ends the connection
+        while not response_message.type == MessageType.END_CONNECTION:
+            response_message = self.receive()
+            print(f'[SERVER] Received: {response_message.data}')
+
+    def send(self, message: Message):
+        data_string = pickle.dumps(message)
+        self.socket.send(data_string)
+
+    def receive(self, client_socket: socket.socket = None) -> Message:
+        if client_socket:
+            data_string = client_socket.recv(4096)
+            return pickle.loads(data_string)
+        else:
+            data_string = self.socket.recv(4096)
+            return pickle.loads(data_string)

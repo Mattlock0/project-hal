@@ -7,16 +7,16 @@ import platform
 from libs.texttospeech import TTSEngine
 from libs.motionled import MSLED
 from libs.speechtotext import STTEngine
-from libs.client import Client
-from libs.server import Server
+# from libs.client import Client
+# from libs.server import Server
+from libs.common.hsocket import Socket
 
 # enable/disable sections
 ENABLE = {'TTS': False, 
           'MSLED': False,
           'MS': False,
           'STT': False,
-          'Client': True,
-          'Server': True}
+          'Network': True}
 
 # time constants
 MORNING_START    = 5
@@ -106,14 +106,14 @@ def launch_linux_tests() -> None:
         stt_engine = STTEngine()
         stt_engine.speech_to_file()
             
-    if ENABLE['Client']:
-        socket = Client()
+    if ENABLE['Network']:
+        socket = Socket(is_server=False)
         socket.connect()
 
 
 def launch_windows_tests() -> None:
-    if ENABLE['Server']:
-        server = Server()
+    if ENABLE['Network']:
+        server = Socket(is_server=True)
         server.connect()
 
 
