@@ -1,5 +1,5 @@
-from libs.commands import Command, MessageType
-import libs.formatter as formatter
+from libs.common.commands import Command, MessageType
+import libs.common.formatter as MessageFormatter
 import socket
 
 SERVER_HOST = "MATTHEW-ALIEN"  # The server's hostname or IP address
@@ -20,9 +20,9 @@ class Client:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.connect((self.host, self.port))
             print('Connected to server.')
-            formatter.send(s, Command.OPEN_STRING_STREAM)
+            MessageFormatter.send(s, Command.OPEN_STRING_STREAM)
 
             data = "", ""
 
             while END_STRING not in data[0]:
-                data = formatter.receive(s)
+                data = MessageFormatter.receive(s)

@@ -1,5 +1,5 @@
 from socket import socket
-from libs.commands import Command, MessageType
+from libs.common.commands import Command, MessageType
 
 FORMAT = 'utf-8'
 TAG_SEPARATOR = '::'

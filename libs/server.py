@@ -1,5 +1,5 @@
-from commands import MessageType, Command
-import libs.formatter as formatter
+from libs.common.commands import MessageType, Command
+import libs.common.formatter as MessageFormatter
 import socket
 
 LOCAL_HOST = "127.0.0.1"  # standard loopback interface address (localhost)
@@ -28,7 +28,7 @@ class Server:
             with client:
                 print(f'Connected by {addr}')
                 while True:
-                    data = formatter.receive(client)
+                    data = MessageFormatter.receive(client)
                     if not data or data[0] == "":
                         break
 
@@ -36,7 +36,7 @@ class Server:
                         inp = ''
                         while END_STRING not in inp.lower():
                             inp = input('[INPUT DATA] ')
-                            formatter.send(client, inp)
+                            MessageFormatter.send(client, inp)
                         break
 
                     else:  # default case
@@ -45,4 +45,4 @@ class Server:
                         else:
                             to_send = "LOOPBACK_ERROR"
                         print(f'[SENT] {to_send}')
-                        formatter.send(client, to_send)
+                        MessageFormatter.send(client, to_send)
