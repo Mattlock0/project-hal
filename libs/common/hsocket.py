@@ -3,7 +3,7 @@ import pickle
 import socket
 
 # hal includes
-from message import Message, MessageType
+from libs.common.message import Message, MessageType
 
 SERVER_HOST = 'MATTHEW-ALIEN'  # computer name of host
 GENERAL_HOST = '0.0.0.0'  # general, capture-all host for server
