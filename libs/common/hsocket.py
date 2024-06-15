@@ -16,14 +16,18 @@ class Socket:
         self.server = is_server
         if self.server:
             self.host = GENERAL_HOST
+            self.clients = []
         else:
             self.host = SERVER_HOST
+            self.clients = None
         self.port = PORT
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def __del__(self) -> None:
         self.socket.close()
-        # might need to close connection if server?
+        if self.server:
+            for client in self.clients:
+                client[0].close()
 
     def connect(self):
         print('Opening socket...')
@@ -38,23 +42,23 @@ class Socket:
         self.socket.bind((self.host, self.port))
         self.socket.listen()
 
-        client, address = self.socket.accept()
+        conn, address = self.socket.accept()
+        self.clients.append(conn, address)
 
-        with client:
-            print(f'Connected by {address}')
+        print(f'Connected by {self.clients[0][1]}')
 
-            while True:
-                client_message = self.receive(client)
-                if client_message.type == MessageType.CLIENT_CONNECTION:
-                    print(f'Got an init string from client!')
+        while True:
+            client_message = self.receive()
+            if client_message.type == MessageType.CLIENT_CONNECTION:
+                print(f'Got an init string from client!')
 
-                    server_message = Message(MessageType.STRING, "Welcome to the server!")
-                    self.send(server_message)
+                server_message = Message(MessageType.STRING, "Welcome to the server!")
+                self.send(server_message)
 
-                    # then end connection
-                    server_message = Message(MessageType.END_CONNECTION, "Thank you.")
-                    self.send(server_message)
-                    break
+                # then end connection
+                server_message = Message(MessageType.END_CONNECTION, "Thank you.")
+                self.send(server_message)
+                break
 
     def connect_client(self):
         self.socket.connect((self.host, self.port))
@@ -71,12 +75,18 @@ class Socket:
             print(f'[SERVER] Received: {response_message.data}')
 
     def send(self, message: Message):
-        data_string = pickle.dumps(message)
-        self.socket.send(data_string)
+        if self.server:
+            for client in self.clients:
+                data_string = pickle.dumps(message)
+                client.send(data_string)
+        else:
+            data_string = pickle.dumps(message)
+            self.socket.send(data_string)
 
-    def receive(self, client_socket: socket.socket = None) -> Message:
-        if client_socket:
-            data_string = client_socket.recv(4096)
+    def receive(self) -> Message:
+        if self.server:
+            # only receives from the first client right now
+            data_string = self.clients[0][0].recv(4096)
             return pickle.loads(data_string)
         else:
             data_string = self.socket.recv(4096)
